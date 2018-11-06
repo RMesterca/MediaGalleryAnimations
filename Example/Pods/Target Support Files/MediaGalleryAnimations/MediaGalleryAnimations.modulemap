@@ -1,0 +1,6 @@
+framework module MediaGalleryAnimations {
+  umbrella header "MediaGalleryAnimations-umbrella.h"
+
+  export *
+  module * { export * }
+}

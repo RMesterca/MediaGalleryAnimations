@@ -1,0 +1,22 @@
+{
+  "name": "MediaGalleryAnimations",
+  "version": "0.1.0",
+  "summary": "A short description of MediaGalleryAnimations.",
+  "description": "TODO: Add long description of the pod here.",
+  "homepage": "https://github.com/rmesterca/MediaGalleryAnimations",
+  "license": {
+    "type": "MIT",
+    "file": "LICENSE"
+  },
+  "authors": {
+    "rmesterca": "ralucamesterca@gmail.com"
+  },
+  "source": {
+    "git": "https://github.com/rmesterca/MediaGalleryAnimations.git",
+    "tag": "0.1.0"
+  },
+  "platforms": {
+    "ios": "8.0"
+  },
+  "source_files": "MediaGalleryAnimations/Classes/**/*"
+}

@@ -1,0 +1,16 @@
+PODS:
+  - MediaGalleryAnimations (0.1.0)
+
+DEPENDENCIES:
+  - MediaGalleryAnimations (from `../`)
+
+EXTERNAL SOURCES:
+  MediaGalleryAnimations:
+    :path: "../"
+
+SPEC CHECKSUMS:
+  MediaGalleryAnimations: 0128e34cdfbd4ec3cc05973641d22e7ecacb3fae
+
+PODFILE CHECKSUM: 755a799ab754f727e5a20ef90a1344104a06feb5
+
+COCOAPODS: 1.5.3
