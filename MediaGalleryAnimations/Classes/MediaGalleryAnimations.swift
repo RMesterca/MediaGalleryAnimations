@@ -1,11 +1,10 @@
-
 import Foundation
 import UIKit
 
 @available(iOS 10.0, *)
 class MediaGalleryAnimations {
     
-    // MARK: Variables
+    //    MARK: Variables
     var animator: UIViewPropertyAnimator!
     var currentState: Bool = true
     var blur: Bool?
@@ -15,25 +14,12 @@ class MediaGalleryAnimations {
     private var runningAnimators = [UIViewPropertyAnimator]()
     private var animationProgress = [CGFloat]()
     
-    // MARK: Public Methods
-    func handlePanGesture(_ sender: UIPanGestureRecognizer, vc: UIViewController) {
-        switch sender.state {
-        case .began:
-            beginPanRecognizer(vc)
-        case .changed:
-            changePanRecognizer(sender, vc)
-        case .ended:
-            endPanRecognizer(sender, vc)
-        default:
-            ()
-        }
-    }
-    
-    // MARK: Private Methods
+    //    MARK: Methods
     private func animateTransitionIfNeeded(to state: Bool, duration: TimeInterval, vc: UIViewController?) {
         guard runningAnimators.isEmpty else {
             return
         }
+        
         guard let vc = vc else {
             return
         }
@@ -42,70 +28,23 @@ class MediaGalleryAnimations {
         let height = vc.view.frame.height
         
         let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
-            if state == false {
-                vc.view.frame = CGRect(x: 0,
-                                       y: height,
-                                       width: width,
-                                       height: height)
-            }
-            vc.view.layoutIfNeeded()
+            vc.view.frame = CGRect(
+                x: 0,
+                y: height,
+                width: width,
+                height: height)
         })
         
         transitionAnimator.addCompletion { position in
-            guard self.blur == true else {
-                return
-            }
-            
-            switch position {
-            case .start:
-                self.currentState = !state
-            case .end:
-                self.currentState = state
-            case .current:
-                ()
-            }
-            
-            switch self.currentState {
-            case true:
-                vc.view.frame = CGRect(
-                    x: 0,
-                    y: 0,
-                    width: width,
-                    height: height)
-            case false:
-                vc.view.frame = CGRect(
-                    x: 0,
-                    y: height,
-                    width: width,
-                    height: height)
+            if position == .end {
                 vc.dismiss(animated: false, completion: nil)
             }
         }
         
         blurEffectView.frame = UIScreen.main.bounds
         
-        let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) { [blurEffectView] in
-            if state == false {
-                blurEffectView.effect = nil
-            }
-        }
-        
-        blurAnimator.addCompletion { (position) in
-            switch position {
-            case .start:
-                self.currentState = !state
-            case .end:
-                self.currentState = state
-            case .current:
-                ()
-            }
-            
-            switch self.currentState {
-            case true:
-                self.blurEffectView.effect = nil
-            case false:
-                self.blurEffectView.effect = UIBlurEffect(style: .dark)
-            }
+        let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+            self.blurEffectView.effect = nil
         }
         
         if #available(iOS 11.0, *) {
@@ -130,11 +69,7 @@ class MediaGalleryAnimations {
         let translation = sender.translation(in: vc.view)
         let screenBounds = UIScreen.main.bounds
         
-        var fraction = -translation.y / screenBounds.height
-        
-        if currentState == true {
-            fraction *= -1
-        }
+        var fraction = translation.y / screenBounds.height
         
         assert(runningAnimators.count == 2)
         
@@ -164,5 +99,17 @@ class MediaGalleryAnimations {
         runningAnimators.forEach { $0.continueAnimation(withTimingParameters: nil, durationFactor: 0) }
         runningAnimators.removeAll()
     }
+    
+    func handlePanGesture(_ sender: UIPanGestureRecognizer, vc: UIViewController) {
+        switch sender.state {
+        case .began:
+            beginPanRecognizer(vc)
+        case .changed:
+            changePanRecognizer(sender, vc)
+        case .ended:
+            endPanRecognizer(sender, vc)
+        default:
+            ()
+        }
+    }
 }
-
