@@ -1,0 +1,6 @@
+use_frameworks!
+target 'MediaGalleryAnimations_Tests' do
+  pod 'MediaGalleryAnimations', :path => '../'
+  
+  
+end
