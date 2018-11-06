@@ -2,50 +2,63 @@ import Foundation
 import UIKit
 
 @available(iOS 10.0, *)
-class MediaGalleryAnimations {
+open class MediaGalleryAnimations {
     
-    //    MARK: Variables
-    var animator: UIViewPropertyAnimator!
-    var currentState: Bool = true
-    var blur: Bool?
-    lazy var blurEffectView = UIVisualEffectView(effect: blurEffect)
-    
-    private let blurEffect = UIBlurEffect(style: .dark)
+    // MARK: Variables
+    open var animator: UIViewPropertyAnimator!
+    open var currentState: Bool = true
+    open var blurEffect = UIBlurEffect(style: .dark)
+
+    private lazy var blurEffectView = UIVisualEffectView(effect: blurEffect)
     private var runningAnimators = [UIViewPropertyAnimator]()
     private var animationProgress = [CGFloat]()
-    
-    //    MARK: Methods
-    private func animateTransitionIfNeeded(to state: Bool, duration: TimeInterval, vc: UIViewController?) {
-        guard runningAnimators.isEmpty else {
-            return
-        }
-        
-        guard let vc = vc else {
-            return
-        }
-        
+
+    // MARK: Methods
+
+    open func translationAnimator(
+        for vc: UIViewController,
+        with duration: TimeInterval) -> UIViewPropertyAnimator {
         let width = vc.view.frame.width
         let height = vc.view.frame.height
-        
-        let transitionAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1, animations: {
-            vc.view.frame = CGRect(
-                x: 0,
-                y: height,
-                width: width,
-                height: height)
+
+        return UIViewPropertyAnimator(
+            duration: duration,
+            dampingRatio: 1,
+            animations: {
+                vc.view.frame = CGRect(
+                    x: 0,
+                    y: height,
+                    width: width,
+                    height: height)
         })
+    }
+
+    open func blurAnimator(
+        for blurView: UIVisualEffectView,
+        with duration: TimeInterval) -> UIViewPropertyAnimator {
+
+        blurView.frame = UIScreen.main.bounds
+
+        return UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
+            blurView.effect = nil
+        }
+    }
+
+    private func animateTransitionIfNeeded(to state: Bool, duration: TimeInterval, vc: UIViewController?) {
+        guard
+            runningAnimators.isEmpty,
+            let vc = vc
+            else { return }
+
+        let transitionAnimator = translationAnimator(for: vc, with: duration)
         
         transitionAnimator.addCompletion { position in
             if position == .end {
                 vc.dismiss(animated: false, completion: nil)
             }
         }
-        
-        blurEffectView.frame = UIScreen.main.bounds
-        
-        let blurAnimator = UIViewPropertyAnimator(duration: duration, dampingRatio: 1) {
-            self.blurEffectView.effect = nil
-        }
+
+        let blurAnimator = self.blurAnimator(for: blurEffectView, with: duration)
         
         if #available(iOS 11.0, *) {
             blurAnimator.scrubsLinearly = false
